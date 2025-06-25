@@ -52,19 +52,21 @@
     <p>У вас пока нет вакансий.</p>
   {% endif %}
 {% else %}
-  <h3>Ваши отклики / сообщения</h3>
-  {% if applications %}
-    <ul class="list-group">
-      {% for app in applications %}
-        <li class="list-group-item">
-          {{ app.text }} <br>
-          <small class="text-muted">{{ app.timestamp }}</small>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>У вас пока нет сообщений или откликов.</p>
-  {% endif %}
+  <h3>Отклики от соискателей</h3>
+{% if applications %}
+  <ul class="list-group">
+    {% for app in applications %}
+      <li class="list-group-item">
+        <strong>{{ app.first_name }} {{ app.last_name }}:</strong><br>
+        {{ app.text }}<br>
+        <small class="text-muted">{{ app.timestamp }}</small>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Пока нет откликов.</p>
+{% endif %}
+
 {% endif %}
 
 <a href="{{ url_for('index') }}" class="btn btn-primary mt-4">Вернуться к вакансиям</a>

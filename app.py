@@ -108,7 +108,13 @@ def profile():
     # Для сообщений/откликов
     applications = []
     if session['user']['role'] == 'работодатель':
-        applications = conn.execute('SELECT * FROM messages WHERE receiver_id = ?', (user_id,)).fetchall()
+        applications = conn.execute('''
+            SELECT m.*, u.first_name, u.last_name
+            FROM messages m
+            JOIN users u ON m.sender_id = u.id
+            WHERE m.receiver_id = ?
+            ORDER BY m.timestamp DESC
+        ''', (user_id,)).fetchall()
     else:
         applications = conn.execute('SELECT * FROM messages WHERE sender_id = ?', (user_id,)).fetchall()
 
