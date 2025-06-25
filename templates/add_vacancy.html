@@ -10,16 +10,21 @@
   <textarea class="form-control mb-2" name="description" placeholder="Описание" required></textarea>
   <input class="form-control mb-2" name="location" placeholder="Город" required>
   <input class="form-control mb-2" name="salary" placeholder="Зарплата" required>
-  <select class="form-select mb-2" name="job_type">
-    <option>Полная занятость</option>
-    <option>Частичная</option>
-    <option>Разовая</option>
+  
+  <select class="form-select mb-2" name="job_type" required>
+    <option value="">Выберите тип работы</option>
+    <option value="Полная занятость">Полная занятость</option>
+    <option value="Частичная">Частичная</option>
+    <option value="Разовая">Разовая</option>
   </select>
-  <select class="form-select mb-2" name="payment_type">
-    <option>Почасовая</option>
-    <option>За день</option>
-    <option>Договорная</option>
+  
+  <select class="form-select mb-2" name="payment_type" required>
+    <option value="">Выберите тип оплаты</option>
+    <option value="Почасовая">Почасовая</option>
+    <option value="За день">За день</option>
+    <option value="Договорная">Договорная</option>
   </select>
+  
   <button class="btn btn-primary w-100">Добавить</button>
 </form>
 
