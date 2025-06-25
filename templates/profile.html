@@ -51,22 +51,37 @@
   {% else %}
     <p>У вас пока нет вакансий.</p>
   {% endif %}
-{% else %}
-  <h3>Отклики от соискателей</h3>
-{% if applications %}
-  <ul class="list-group">
-    {% for app in applications %}
-      <li class="list-group-item">
-        <strong>{{ app.first_name }} {{ app.last_name }}:</strong><br>
-        {{ app.text }}<br>
-        <small class="text-muted">{{ app.timestamp }}</small>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Пока нет откликов.</p>
-{% endif %}
 
+  <h3>Отклики и сообщения от соискателей</h3>
+  {% if applications %}
+    <ul class="list-group">
+      {% for app in applications %}
+        <li class="list-group-item">
+          <strong>{{ app.first_name }} {{ app.last_name }}:</strong><br>
+          {{ app.text }}<br>
+          <small class="text-muted">{{ app.timestamp }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Пока нет откликов или сообщений.</p>
+  {% endif %}
+
+{% elif user.role == 'соискатель' %}
+  <h3>Сообщения от работодателей</h3>
+  {% if applications %}
+    <ul class="list-group">
+      {% for app in applications %}
+        <li class="list-group-item">
+          <strong>{{ app.first_name }} {{ app.last_name }}:</strong><br>
+          {{ app.text }}<br>
+          <small class="text-muted">{{ app.timestamp }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Пока нет сообщений.</p>
+  {% endif %}
 {% endif %}
 
 <a href="{{ url_for('index') }}" class="btn btn-primary mt-4">Вернуться к вакансиям</a>
