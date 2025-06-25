@@ -119,10 +119,12 @@ def profile():
 def add_vacancy():
     if 'user' not in session or session['user']['role'] != 'работодатель':
         return redirect(url_for('login'))
+
     if request.method == 'POST':
         data = request.form
         user_id = session['user']['id']
-        print("Добавляем вакансию от пользователя ID:", user_id)  # Для отладки
+        print("👉 Добавляем вакансию:", data, "от пользователя", user_id)
+
         try:
             conn = get_db()
             conn.execute(
@@ -132,12 +134,11 @@ def add_vacancy():
             )
             conn.commit()
             conn.close()
-            print("Вакансия успешно добавлена")
             return redirect(url_for('index'))
         except Exception as e:
-            print("Ошибка при добавлении вакансии:", e)
-            conn.close()
+            print("❌ Ошибка при добавлении вакансии:", e)
             return "Ошибка при добавлении вакансии", 500
+
     return render_template('add_vacancy.html')
 
 @app.route('/chat/<int:receiver_id>', methods=['GET', 'POST'])

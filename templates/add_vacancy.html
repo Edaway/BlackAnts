@@ -4,6 +4,7 @@
 
 {% block content %}
 <h2>Добавить вакансию</h2>
+
 <form method="POST">
   <input class="form-control mb-2" name="title" placeholder="Название вакансии" required>
   <textarea class="form-control mb-2" name="description" placeholder="Описание" required></textarea>
@@ -21,4 +22,12 @@
   </select>
   <button class="btn btn-primary w-100">Добавить</button>
 </form>
+try:
+    ...
+    print("Добавляем вакансию:", user_id, data['title'], ...)
+    conn.commit()
+    ...
+except Exception as e:
+    print("Ошибка при сохранении вакансии:", e)
+
 {% endblock %}
