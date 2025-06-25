@@ -100,25 +100,20 @@ def profile():
     conn = get_db()
     user_id = session['user']['id']
 
+    # Для работодателя загружаем вакансии
+    vacancies = []
     if session['user']['role'] == 'работодатель':
-        applications = conn.execute('''
-            SELECT m.*, u.first_name, u.last_name 
-            FROM messages m
-            JOIN users u ON m.sender_id = u.id
-            WHERE m.receiver_id = ?
-            ORDER BY m.timestamp DESC
-        ''', (user_id,)).fetchall()
+        vacancies = conn.execute('SELECT * FROM vacancies WHERE user_id = ?', (user_id,)).fetchall()
+
+    # Для сообщений/откликов
+    applications = []
+    if session['user']['role'] == 'работодатель':
+        applications = conn.execute('SELECT * FROM messages WHERE receiver_id = ?', (user_id,)).fetchall()
     else:
-        applications = conn.execute('''
-            SELECT m.*, u.first_name, u.last_name 
-            FROM messages m
-            JOIN users u ON m.receiver_id = u.id
-            WHERE m.sender_id = ?
-            ORDER BY m.timestamp DESC
-        ''', (user_id,)).fetchall()
+        applications = conn.execute('SELECT * FROM messages WHERE sender_id = ?', (user_id,)).fetchall()
 
     conn.close()
-    return render_template('profile.html', user=session['user'], applications=applications)
+    return render_template('profile.html', user=session['user'], vacancies=vacancies, applications=applications)
 
 @app.route('/add-vacancy', methods=['GET', 'POST'])
 def add_vacancy():
@@ -126,16 +121,23 @@ def add_vacancy():
         return redirect(url_for('login'))
     if request.method == 'POST':
         data = request.form
-        user_id = session['user']['id']  # Берем id текущего пользователя из сессии
-        conn = get_db()
-        conn.execute(
-            "INSERT INTO vacancies (user_id, title, description, job_type, payment_type, location, salary) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (user_id, data['title'], data['description'], data['job_type'],
-             data['payment_type'], data['location'], data['salary'])
-        )
-        conn.commit()
-        conn.close()
-        return redirect(url_for('index'))
+        user_id = session['user']['id']
+        print("Добавляем вакансию от пользователя ID:", user_id)  # Для отладки
+        try:
+            conn = get_db()
+            conn.execute(
+                "INSERT INTO vacancies (user_id, title, description, job_type, payment_type, location, salary) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (user_id, data['title'], data['description'], data['job_type'],
+                 data['payment_type'], data['location'], data['salary'])
+            )
+            conn.commit()
+            conn.close()
+            print("Вакансия успешно добавлена")
+            return redirect(url_for('index'))
+        except Exception as e:
+            print("Ошибка при добавлении вакансии:", e)
+            conn.close()
+            return "Ошибка при добавлении вакансии", 500
     return render_template('add_vacancy.html')
 
 @app.route('/chat/<int:receiver_id>', methods=['GET', 'POST'])
