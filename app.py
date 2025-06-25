@@ -100,27 +100,29 @@ def profile():
     conn = get_db()
     user_id = session['user']['id']
 
+    # Для работодателя загружаем вакансии
     vacancies = []
     if session['user']['role'] == 'работодатель':
         vacancies = conn.execute('SELECT * FROM vacancies WHERE user_id = ?', (user_id,)).fetchall()
 
+    # Для сообщений/откликов
     applications = []
     if session['user']['role'] == 'работодатель':
-        # Сообщения, где текущий пользователь — получатель (от соискателей)
+        # Сообщения, где этот пользователь — получатель (receiver), отправитель (sender) — соискатель
         applications = conn.execute('''
-            SELECT m.*, u.first_name, u.last_name
+            SELECT m.*, u.first_name, u.last_name, u.id as sender_id
             FROM messages m
             JOIN users u ON m.sender_id = u.id
             WHERE m.receiver_id = ?
             ORDER BY m.timestamp DESC
         ''', (user_id,)).fetchall()
     else:
-        # Сообщения, где текущий пользователь — получатель (от работодателей)
+        # Сообщения, где пользователь — отправитель, получатель — работодатель
         applications = conn.execute('''
-            SELECT m.*, u.first_name, u.last_name
+            SELECT m.*, u.first_name, u.last_name, u.id as receiver_id
             FROM messages m
-            JOIN users u ON m.sender_id = u.id
-            WHERE m.receiver_id = ?
+            JOIN users u ON m.receiver_id = u.id
+            WHERE m.sender_id = ?
             ORDER BY m.timestamp DESC
         ''', (user_id,)).fetchall()
 

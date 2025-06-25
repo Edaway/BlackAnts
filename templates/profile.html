@@ -59,7 +59,8 @@
         <li class="list-group-item">
           <strong>{{ app.first_name }} {{ app.last_name }}:</strong><br>
           {{ app.text }}<br>
-          <small class="text-muted">{{ app.timestamp }}</small>
+          <small class="text-muted">{{ app.timestamp }}</small><br>
+          <a href="{{ url_for('chat', receiver_id=app.sender_id) }}" class="btn btn-sm btn-primary mt-2">Ответить</a>
         </li>
       {% endfor %}
     </ul>
@@ -75,7 +76,8 @@
         <li class="list-group-item">
           <strong>{{ app.first_name }} {{ app.last_name }}:</strong><br>
           {{ app.text }}<br>
-          <small class="text-muted">{{ app.timestamp }}</small>
+          <small class="text-muted">{{ app.timestamp }}</small><br>
+          <a href="{{ url_for('chat', receiver_id=app.receiver_id) }}" class="btn btn-sm btn-primary mt-2">Ответить</a>
         </li>
       {% endfor %}
     </ul>
