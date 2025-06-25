@@ -75,9 +75,13 @@ def login():
     error = None
     if request.method == 'POST':
         conn = get_db()
-        user = conn.execute('SELECT * FROM users WHERE email = ?', (request.form['email'],)).fetchone()
+        user = conn.execute(
+            'SELECT * FROM users WHERE email = ? AND password = ?',
+            (request.form['email'], request.form['password'])
+        ).fetchone()
         conn.close()
-        if user and check_password_hash(user['password'], request.form['password']):
+        if user:
+            # Очень важно: сохраняем в сессию всю информацию пользователя, включая id!
             session['user'] = dict(user)
             return redirect(url_for('profile'))
         else:
@@ -122,11 +126,13 @@ def add_vacancy():
         return redirect(url_for('login'))
     if request.method == 'POST':
         data = request.form
+        user_id = session['user']['id']  # Берем id текущего пользователя из сессии
         conn = get_db()
         conn.execute(
             "INSERT INTO vacancies (user_id, title, description, job_type, payment_type, location, salary) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (session['user']['id'], data['title'], data['description'], data['job_type'],
-             data['payment_type'], data['location'], data['salary']))
+            (user_id, data['title'], data['description'], data['job_type'],
+             data['payment_type'], data['location'], data['salary'])
+        )
         conn.commit()
         conn.close()
         return redirect(url_for('index'))
